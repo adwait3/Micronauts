@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micronauts - Microplastics Detection System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header__content">
+                <div class="header__title">
+                    <h1>Micronauts</h1>
+                    <p>Microplastics Detection System</p>
+                </div>
+                <div class="header__status">
+                    <div class="status-indicator">
+                        <div class="status-dot status-dot--online"></div>
+                        <span>Online</span>
+                    </div>
+                    <div class="header__info">
+                        <div class="current-time" id="currentTime"></div>
+                        <div class="location" id="location">Mumbai, India</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alerts Banner -->
+        <div class="alerts-banner" id="alertsBanner">
+            <div class="alert alert--warning">
+                <div class="alert__icon">⚠️</div>
+                <div class="alert__content">
+                    <strong>Concentration Alert:</strong> Microplastic levels above average threshold
+                </div>
+                <button class="alert__close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard__main">
+            <!-- Real-time Monitoring Section -->
+            <section class="monitoring-section">
+                <div class="monitoring-grid">
+                    <!-- Primary Reading Card -->
+                    <div class="card card--primary">
+                        <div class="card__header">
+                            <h2>Current Detection</h2>
+                            <div class="detection-status">
+                                <div class="pulse-indicator"></div>
+                                <span>Detecting</span>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div class="primary-metric">
+                                <div class="metric-value" id="microplasticCount">847</div>
+                                <div class="metric-unit">particles</div>
+                                <div class="metric-subtitle">Microplastic Count</div>
+                            </div>
+                            <div class="secondary-metrics">
+                                <div class="metric">
+                                    <span class="metric-label">Concentration</span>
+                                    <span class="metric-value" id="concentration">12.4</span>
+                                    <span class="metric-unit">mg/L</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Confidence</span>
+                                    <span class="metric-value" id="confidence">94.2</span>
+                                    <span class="metric-unit">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water Quality Cards -->
+                    <div class="water-quality-grid">
+                        <div class="card card--compact">
+                            <div class="card__body">
+                                <div class="metric-icon">🌡️</div>
+                                <div class="metric-info">
+                                    <div class="metric-value" id="temperature">23.5</div>
+                                    <div class="metric-label">Temperature (°C)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card--compact">
+                            <div class="card__body">
+                                <div class="metric-icon">⚗️</div>
+                                <div class="metric-info">
+                                    <div class="metric-value" id="ph">7.8</div>
+                                    <div class="metric-label">pH Level</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card--compact">
+                            <div class="card__body">
+                                <div class="metric-icon">⚡</div>
+                                <div class="metric-info">
+                                    <div class="metric-value" id="conductivity">425</div>
+                                    <div class="metric-label">Conductivity (μS/cm)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Visualization Section -->
+            <section class="visualization-section">
+                <div class="visualization-grid">
+                    <!-- Time Series Chart -->
+                    <div class="card card--chart">
+                        <div class="card__header">
+                            <h3>Microplastic Concentration Trend</h3>
+                            <div class="chart-controls">
+                                <button class="btn btn--sm chart-period" data-period="6h">6H</button>
+                                <button class="btn btn--sm chart-period active" data-period="24h">24H</button>
+                                <button class="btn btn--sm chart-period" data-period="7d">7D</button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Particle Size Distribution -->
+                    <div class="card card--chart">
+                        <div class="card__header">
+                            <h3>Particle Size Distribution</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="sizeDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polymer Types -->
+                    <div class="card card--chart">
+                        <div class="card__header">
+                            <h3>Polymer Type Breakdown</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="polymerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Status Section -->
+            <section class="status-section">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>System Status</h3>
+                        <div class="status status--success">Operational</div>
+                    </div>
+                    <div class="card__body">
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <div class="status-item__icon">🔋</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">Battery</div>
+                                    <div class="status-item__value">
+                                        <div class="battery-indicator">
+                                            <div class="battery-level" style="width: 87%"></div>
+                                        </div>
+                                        <span id="batteryLevel">87%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-item__icon">📍</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">GPS Location</div>
+                                    <div class="status-item__value" id="gpsCoords">19.0760°N, 72.8777°E</div>
+                                </div>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-item__icon">🎯</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">Calibration</div>
+                                    <div class="status-item__value">
+                                        <div class="status status--success">Valid</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-item__icon">📶</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">Connection</div>
+                                    <div class="status-item__value">
+                                        <div class="connection-strength">
+                                            <div class="signal-bar active"></div>
+                                            <div class="signal-bar active"></div>
+                                            <div class="signal-bar active"></div>
+                                            <div class="signal-bar active"></div>
+                                        </div>
+                                        <span>Excellent</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-item__icon">🔧</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">Sensor Health</div>
+                                    <div class="status-item__value">
+                                        <div class="status status--success">Optimal</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-item">
+                                <div class="status-item__icon">📅</div>
+                                <div class="status-item__content">
+                                    <div class="status-item__label">Last Maintenance</div>
+                                    <div class="status-item__value">Sep 5, 2025</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Export Section -->
+            <section class="export-section">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Data Export</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="export-controls">
+                            <div class="form-group">
+                                <label class="form-label">Time Range</label>
+                                <select class="form-control" id="exportRange">
+                                    <option value="1h">Last Hour</option>
+                                    <option value="24h" selected>Last 24 Hours</option>
+                                    <option value="7d">Last 7 Days</option>
+                                    <option value="30d">Last 30 Days</option>
+                                </select>
+                            </div>
+                            <div class="export-buttons">
+                                <button class="btn btn--outline">Export CSV</button>
+                                <button class="btn btn--outline">Export JSON</button>
+                                <button class="btn btn--primary">Generate Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
