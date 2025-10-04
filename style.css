@@ -1309,3 +1309,208 @@ select.form-control {
         padding: var(--space-8);
     }
 }
+/* Analysis Section Styles */
+.analysis-section {
+  background: var(--color-background);
+  padding: var(--space-24) 0;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-24);
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-16);
+}
+
+.analysis-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.plot-controls, .sample-toggles {
+  display: flex;
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.sample-toggles {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.eis-annotations {
+  display: flex;
+  justify-content: space-around;
+  margin-top: var(--space-16);
+  padding: var(--space-12) 0;
+  background: var(--color-bg-1);
+  border-radius: var(--radius-base);
+}
+
+.annotation-item {
+  text-align: center;
+}
+
+.annotation-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.annotation-value {
+  display: block;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+/* Prediction Card */
+.card--prediction {
+  border: 2px solid var(--color-success);
+  background: linear-gradient(135deg, var(--color-bg-3), var(--color-bg-1));
+}
+
+.prediction-status {
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.prediction-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.prediction-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-12);
+}
+
+.prediction-label {
+  font-weight: var(--font-weight-medium);
+}
+
+.prediction-value {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success);
+  font-size: var(--font-size-lg);
+}
+
+.prediction-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.prediction-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+}
+
+.confidence-bar {
+  position: relative;
+  height: 8px;
+  background: var(--color-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success), var(--color-primary));
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-standard);
+}
+
+.confidence-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  display: block;
+}
+
+/* Optical Fusion */
+.fusion-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.led-channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.led-channel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  font-size: var(--font-size-sm);
+}
+
+.led-bar {
+  height: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-teal-400));
+  border-radius: var(--radius-full);
+  flex: 1;
+  max-width: 100px;
+}
+
+.optical-ratio {
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+}
+
+/* Feature Grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.feature-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.feature-value {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .analysis-grid {
+      grid-template-columns: 1fr;
+  }
+  
+  .eis-annotations {
+      flex-direction: column;
+      gap: var(--space-8);
+  }
+  
+  .feature-grid {
+      grid-template-columns: 1fr;
+  }
+}

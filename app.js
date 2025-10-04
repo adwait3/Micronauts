@@ -516,6 +516,240 @@ document.addEventListener('DOMContentLoaded', function() {
         gpsElement.textContent = `${latitude.toFixed(4)}°N, ${longitude.toFixed(4)}°E`;
     }
 });
+// Sample EIS data for different states
+const eisData = {
+    baseline: {
+        frequencies: [0.1, 0.5, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000],
+        zReal: [3.2, 3.0, 2.8, 2.5, 2.3, 2.1, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4],
+        zImag: [-0.1, -0.3, -0.5, -0.8, -1.0, -1.2, -1.0, -0.8, -0.6, -0.4, -0.2, -0.1, -0.05],
+        rct: 2.4,
+        rs: 1.4,
+        cdl: 18,
+        warburg: 0.32
+    },
+    low: {
+        frequencies: [0.1, 0.5, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000],
+        zReal: [2.8, 2.6, 2.4, 2.2, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4, 1.3, 1.2],
+        zImag: [-0.2, -0.4, -0.6, -0.9, -1.1, -1.3, -1.1, -0.9, -0.7, -0.5, -0.3, -0.1, -0.05],
+        rct: 2.0,
+        rs: 1.2,
+        cdl: 22,
+        warburg: 0.41
+    },
+    high: {
+        frequencies: [0.1, 0.5, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000],
+        zReal: [2.4, 2.2, 2.0, 1.8, 1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0, 0.9],
+        zImag: [-0.3, -0.5, -0.7, -1.0, -1.2, -1.4, -1.2, -1.0, -0.8, -0.6, -0.4, -0.2, -0.1],
+        rct: 1.8,
+        rs: 0.9,
+        cdl: 24,
+        warburg: 0.47
+    }
+};
+
+let nyquistChart, bodeChart;
+let currentSampleState = 'baseline';
+
+// Initialize Analysis Section
+function initializeAnalysis() {
+    setupAnalysisEventListeners();
+    initializeNyquistChart();
+    initializeBodeChart();
+    updateAnalysisDisplay();
+}
+
+function setupAnalysisEventListeners() {
+    // Plot type switching
+    const plotButtons = document.querySelectorAll('.plot-type');
+    plotButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            plotButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const plotType = this.dataset.plot;
+            document.getElementById('nyquistChart').style.display = plotType === 'nyquist' ? 'block' : 'none';
+            document.getElementById('bodeChart').style.display = plotType === 'bode' ? 'block' : 'none';
+        });
+    });
+
+    // Sample state switching
+    const sampleButtons = document.querySelectorAll('.sample-state');
+    sampleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            sampleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            currentSampleState = this.dataset.state;
+            updateAnalysisDisplay();
+        });
+    });
+}
+
+function initializeNyquistChart() {
+    const ctx = document.getElementById('nyquistChart').getContext('2d');
+    nyquistChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Baseline',
+                data: [],
+                borderColor: '#A7A9A9',
+                backgroundColor: '#A7A9A9',
+                pointRadius: 4,
+                showLine: true,
+                tension: 0.1
+            }, {
+                label: 'Current',
+                data: [],
+                borderColor: '#1FB8CD',
+                backgroundColor: '#1FB8CD',
+                pointRadius: 6,
+                showLine: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Nyquist Plot: -Im(Z) vs Re(Z)',
+                    font: { size: 16 }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: { display: true, text: 'Re(Z) [Ω]' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                y: {
+                    type: 'linear',
+                    title: { display: true, text: '-Im(Z) [Ω]' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                }
+            },
+            aspectRatio: 1
+        }
+    });
+}
+
+function initializeBodeChart() {
+    const ctx = document.getElementById('bodeChart').getContext('2d');
+    bodeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: '|Z| [Ω]',
+                data: [],
+                borderColor: '#1FB8CD',
+                yAxisID: 'y'
+            }, {
+                label: 'Phase [°]',
+                data: [],
+                borderColor: '#FFC185',
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Bode Plot: |Z| and Phase vs Frequency'
+                }
+            },
+            scales: {
+                x: {
+                    type: 'logarithmic',
+                    title: { display: true, text: 'Frequency [Hz]' }
+                },
+                y: {
+                    type: 'logarithmic',
+                    display: true,
+                    position: 'left',
+                    title: { display: true, text: '|Z| [Ω]' }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: { display: true, text: 'Phase [°]' },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+}
+function showSection(section) {
+    // Hide all sections
+    document.getElementById('dashboardMain').style.display = section === 'dashboard' ? 'block' : 'none';
+    document.getElementById('analysisSection').style.display = section === 'analysis' ? 'block' : 'block';
+}
+
+
+function updateAnalysisDisplay() {
+    const data = eisData[currentSampleState];
+    const baselineData = eisData.baseline;
+    
+    // Update Nyquist chart
+    if (nyquistChart) {
+        // Baseline data
+        const baselinePoints = baselineData.zReal.map((real, i) => ({
+            x: real,
+            y: Math.abs(baselineData.zImag[i])
+        }));
+        
+        // Current data
+        const currentPoints = data.zReal.map((real, i) => ({
+            x: real,
+            y: Math.abs(data.zImag[i])
+        }));
+        
+        nyquistChart.data.datasets[0].data = baselinePoints;
+        nyquistChart.data.datasets[1].data = currentPoints;
+        nyquistChart.update();
+    }
+    
+    // Update annotations
+    document.getElementById('rsValue').textContent = `${data.rs} kΩ`;
+    document.getElementById('rctValue').textContent = `${data.rct} kΩ`;
+    document.getElementById('warburgValue').textContent = data.warburg.toString();
+    
+    // Update prediction based on state
+    const predictions = {
+        baseline: { status: 'None Detected', confidence: 12, color: 'var(--color-text-secondary)' },
+        low: { status: 'Present (Low)', confidence: 78, color: 'var(--color-warning)' },
+        high: { status: 'Present (High)', confidence: 92, color: 'var(--color-success)' }
+    };
+    
+    const pred = predictions[currentSampleState];
+    document.getElementById('predictionValue').textContent = pred.status;
+    document.getElementById('predictionValue').style.color = pred.color;
+    document.getElementById('confidenceFill').style.width = `${pred.confidence}%`;
+    document.querySelector('.confidence-text').textContent = `${pred.confidence}% Confidence`;
+    
+    // Update feature values
+    document.querySelector('.feature-grid .feature-item:nth-child(1) .feature-value').textContent = `${data.rct} kΩ ${data.rct < 2.0 ? '(↓)' : ''}`;
+    document.querySelector('.feature-grid .feature-item:nth-child(2) .feature-value').textContent = `${data.cdl} μF`;
+}
+
+// Add analysis section to main initialization
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    updateCurrentTime();
+    startRealTimeUpdates();
+    setupEventListeners();
+    animateCounters();
+    initializeAnalysis(); // Add this line
+});
 
 // Add smooth scroll behavior for mobile
 document.documentElement.style.scrollBehavior = 'smooth';

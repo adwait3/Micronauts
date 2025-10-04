@@ -8,6 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div class="nav-buttons">
+        <button class="btn btn--secondary" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="btn btn--secondary" onclick="showSection('analysis')">Analysis</button>
+    </div>
+    
     <div class="dashboard">
         <!-- Header Section -->
         <header class="header">
@@ -148,6 +153,137 @@
                         <div class="card__body">
                             <div class="chart-container" style="position: relative; height: 300px;">
                                 <canvas id="polymerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Analysis Section -->
+            <section class="analysis-section" style="display: none;" id="analysisSection">
+                <div class="analysis-grid">
+                    <!-- Left Panel: EIS Plots -->
+                    <div class="card card--chart">
+                        <div class="card__header">
+                            <h3>Electrochemical Impedance Analysis</h3>
+                            <div class="plot-controls">
+                                <button class="btn btn--sm plot-type active" data-plot="nyquist">Nyquist</button>
+                                <button class="btn btn--sm plot-type" data-plot="bode">Bode</button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div class="sample-toggles">
+                                <button class="btn btn--sm sample-state active" data-state="baseline">Baseline (No MPs)</button>
+                                <button class="btn btn--sm sample-state" data-state="low">MPs - Low</button>
+                                <button class="btn btn--sm sample-state" data-state="high">MPs - High</button>
+                            </div>
+                            <div class="chart-container" style="position: relative; height: 400px;">
+                                <canvas id="nyquistChart"></canvas>
+                                <canvas id="bodeChart" style="display: none;"></canvas>
+                            </div>
+                            <!-- EIS Annotations -->
+                            <div class="eis-annotations">
+                                <div class="annotation-item">
+                                    <span class="annotation-label">Rs (high-f)</span>
+                                    <span class="annotation-value" id="rsValue">0.8 kΩ</span>
+                                </div>
+                                <div class="annotation-item">
+                                    <span class="annotation-label">Rct (diameter)</span>
+                                    <span class="annotation-value" id="rctValue">1.8 kΩ</span>
+                                </div>
+                                <div class="annotation-item">
+                                    <span class="annotation-label">Warburg Index</span>
+                                    <span class="annotation-value" id="warburgValue">0.47</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: ML Prediction & Features -->
+                    <div class="analysis-right-panel">
+                        <!-- Model Prediction Card -->
+                        <div class="card card--prediction">
+                            <div class="card__header">
+                                <h3>ML Prediction</h3>
+                                <div class="prediction-status status--success">Active</div>
+                            </div>
+                            <div class="card__body">
+                                <div class="prediction-result">
+                                    <div class="prediction-main">
+                                        <span class="prediction-label">Microplastics:</span>
+                                        <span class="prediction-value" id="predictionValue">Present (High)</span>
+                                    </div>
+                                    <div class="prediction-details">
+                                        <div class="prediction-item">
+                                            <span>Size band:</span>
+                                            <span id="sizeBand">50–200 μm</span>
+                                        </div>
+                                        <div class="prediction-item">
+                                            <span>Likely polymer:</span>
+                                            <span id="polymerPrediction">PE / PP (conf. 0.92)</span>
+                                        </div>
+                                    </div>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" id="confidenceFill" style="width: 92%;"></div>
+                                        <span class="confidence-text">92% Confidence</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optical Fusion Widget -->
+                        <div class="card card--compact">
+                            <div class="card__header">
+                                <h3>Optical Fusion</h3>
+                                <div class="fusion-status">
+                                    <span class="status-dot status-dot--online"></span>
+                                    <span>ON</span>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <div class="led-channels">
+                                    <div class="led-channel">
+                                        <span>450nm</span>
+                                        <div class="led-bar" style="width: 75%;"></div>
+                                    </div>
+                                    <div class="led-channel">
+                                        <span>525nm</span>
+                                        <div class="led-bar" style="width: 60%;"></div>
+                                    </div>
+                                    <div class="led-channel">
+                                        <span>625nm</span>
+                                        <div class="led-bar" style="width: 45%;"></div>
+                                    </div>
+                                </div>
+                                <div class="optical-ratio">
+                                    <span>I450/I625 = 1.31</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature Panel -->
+                        <div class="card card--features">
+                            <div class="card__header">
+                                <h3>EIS Features</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="feature-grid">
+                                    <div class="feature-item">
+                                        <span class="feature-label">Rct</span>
+                                        <span class="feature-value">1.8 kΩ (↓)</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-label">Cdl</span>
+                                        <span class="feature-value">24 μF</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-label">|Z|(1kHz)</span>
+                                        <span class="feature-value">820 Ω</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-label">Phase(100Hz)</span>
+                                        <span class="feature-value">-38°</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
