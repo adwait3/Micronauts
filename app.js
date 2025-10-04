@@ -1,721 +1,454 @@
-// Application Data
-const sensorData = {
-  "currentReading": {
-    "microplasticCount": 847,
-    "concentration": 12.4,
-    "detectionStatus": "active",
-    "confidenceLevel": 94.2,
-    "timestamp": "2025-09-07T01:15:23Z"
-  },
-  "waterQuality": {
-    "temperature": 23.5,
-    "ph": 7.8,
-    "conductivity": 425,
-    "turbidity": 2.1
-  },
-  "systemStatus": {
-    "battery": 87,
-    "calibrationStatus": "valid",
-    "lastCalibration": "2025-09-05T10:30:00Z",
-    "gpsLocation": {
-      "latitude": 19.0760,
-      "longitude": 72.8777,
-      "accuracy": 3.2
-    },
-    "connectionQuality": "excellent",
-    "sensorHealth": "optimal",
-    "onlineStatus": "online"
-  },
-  "historicalData": {
-    "hourlyReadings": [
-      {"time": "00:00", "count": 892, "concentration": 13.1},
-      {"time": "01:00", "count": 847, "concentration": 12.4},
-      {"time": "02:00", "count": 923, "concentration": 14.2},
-      {"time": "03:00", "count": 756, "concentration": 11.8},
-      {"time": "04:00", "count": 834, "concentration": 12.9},
-      {"time": "05:00", "count": 901, "concentration": 13.7}
-    ],
-    "particleSizeDistribution": [
-      {"size": "10-50μm", "percentage": 35.2},
-      {"size": "50-100μm", "percentage": 28.7},
-      {"size": "100-200μm", "percentage": 19.3},
-      {"size": "200-500μm", "percentage": 12.4},
-      {"size": ">500μm", "percentage": 4.4}
-    ],
-    "polymerTypes": [
-      {"type": "Polyethylene (PE)", "percentage": 42.3, "color": "#1FB8CD"},
-      {"type": "Polypropylene (PP)", "percentage": 28.1, "color": "#FFC185"},
-      {"type": "Polystyrene (PS)", "percentage": 16.7, "color": "#B4413C"},
-      {"type": "PET", "percentage": 8.9, "color": "#ECEBD5"},
-      {"type": "Other", "percentage": 4.0, "color": "#5D878F"}
-    ]
-  },
-  "eisData": {
-    "baseline": {
-      "frequencies": [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000],
-      "zReal": [145, 142, 138, 135, 132, 130, 128, 127],
-      "zImag": [-2, -8, -25, -45, -35, -20, -8, -2],
-      "features": {
-        "rct": 18.5,
-        "rs": 127.2,
-        "cdl": 8.6e-6,
-        "warburgIndex": 0.52,
-        "zMag1kHz": 130.4,
-        "phase100Hz": -15.2
-      }
-    },
-    "low": {
-      "frequencies": [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000],
-      "zReal": [138, 135, 130, 125, 120, 118, 116, 115],
-      "zImag": [-3, -12, -35, -55, -42, -25, -10, -3],
-      "features": {
-        "rct": 23.2,
-        "rs": 115.1,
-        "cdl": 6.9e-6,
-        "warburgIndex": 0.48,
-        "zMag1kHz": 120.6,
-        "phase100Hz": -19.3
-      }
-    },
-    "high": {
-      "frequencies": [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000],
-      "zReal": [128, 125, 118, 110, 105, 103, 101, 100],
-      "zImag": [-4, -18, -48, -68, -52, -30, -12, -4],
-      "features": {
-        "rct": 28.7,
-        "rs": 100.3,
-        "cdl": 5.5e-6,
-        "warburgIndex": 0.45,
-        "zMag1kHz": 107.2,
-        "phase100Hz": -23.8
-      }
-    }
-  },
-  "mlPredictions": {
-    "baseline": {
-      "status": "None",
-      "confidence": 96.8,
-      "sizeBand": "N/A",
-      "polymer": "N/A",
-      "statusChip": "success"
-    },
-    "low": {
-      "status": "Present (Low)",
-      "confidence": 87.3,
-      "sizeBand": "50-200 μm",
-      "polymer": "PE/PP",
-      "statusChip": "warning"
-    },
-    "high": {
-      "status": "Present (High)",
-      "confidence": 94.2,
-      "sizeBand": "50-500 μm",
-      "polymer": "PE/PP/PS",
-      "statusChip": "error"
-    }
-  },
-  "opticalData": {
-    "baseline": {
-      "led450nm": 15.2,
-      "led525nm": 18.7,
-      "led625nm": 16.4,
-      "ratio": 0.93,
-      "fusionStatus": "ON"
-    },
-    "low": {
-      "led450nm": 18.6,
-      "led525nm": 22.1,
-      "led625nm": 19.8,
-      "ratio": 0.94,
-      "fusionStatus": "ON"
-    },
-    "high": {
-      "led450nm": 22.8,
-      "led525nm": 28.3,
-      "led625nm": 24.1,
-      "ratio": 0.95,
-      "fusionStatus": "ON"
-    }
-  },
-  "links": {
-    "cad": "https://a360.co/3W7gEjE",
-    "ui": "https://adwait3.github.io/Micronauts"
-  }
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micronauts - Microplastics Detection System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__brand">
+                    <h1 class="brand__title">Micronauts</h1>
+                    <span class="brand__subtitle">Microplastics Detection System</span>
+                </div>
+                
+                <div class="header__status">
+                    <div class="status-pill" id="statusPill">
+                        <span class="pulse-dot"></span>
+                        <span class="status-text">Online</span>
+                        <span class="status-time" id="statusTime">12:15 PM</span>
+                        <span class="status-location">Mumbai, IN</span>
+                    </div>
+                </div>
+                
+                <nav class="header__nav">
+                    <button class="nav-btn nav-btn--active" data-tab="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-tab="analysis">Analysis</button>
+                    <button class="nav-btn" data-tab="explain">Explain</button>
+                </nav>
+                
+                <div class="header__actions">
+                    <button class="btn btn--outline btn--sm" id="copyCadBtn">Copy CAD Link</button>
+                    <button class="btn btn--outline btn--sm" id="copyUiBtn">Copy Live UI</button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-// Global state
-let currentTab = 'dashboard';
-let currentSampleState = 'baseline';
-let currentPlotType = 'nyquist';
-let charts = {};
+    <!-- Alert Banner -->
+    <div class="alert-banner alert-banner--warning" id="alertBanner">
+        <div class="container">
+            <div class="alert-banner__content">
+                <div class="alert-banner__icon">⚠️</div>
+                <div class="alert-banner__text">
+                    <strong>Microplastics Threshold Exceeded</strong>
+                    <span class="sr-only">Warning:</span>
+                    Current concentration: 12.4 mg/L (Threshold: 10.0 mg/L)
+                </div>
+                <button class="alert-banner__close" id="alertClose" aria-label="Dismiss alert">&times;</button>
+            </div>
+        </div>
+    </div>
 
-// Initialize application
-document.addEventListener('DOMContentLoaded', function() {
-  initializeApp();
-  setupEventListeners();
-  updateTime();
-  setInterval(updateTime, 1000);
-  
-  // Start real-time data simulation
-  setInterval(simulateRealTimeData, 5000);
-});
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Tab -->
+            <section class="tab-content tab-content--active" id="dashboard">
+                <!-- Hero Detection Card -->
+                <div class="hero-card">
+                    <div class="hero-card__header">
+                        <h2>Current Detection</h2>
+                        <div class="detecting-pulse">
+                            <span class="pulse-dot pulse-dot--detecting"></span>
+                            <span>Detecting</span>
+                        </div>
+                    </div>
+                    <div class="hero-card__metrics">
+                        <div class="metric">
+                            <div class="metric__value" id="microplasticCount">847</div>
+                            <div class="metric__label">Particles Detected</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric__value" id="concentration">12.4</div>
+                            <div class="metric__unit">mg/L</div>
+                            <div class="metric__label">Concentration</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric__value" id="confidence">94.2</div>
+                            <div class="metric__unit">%</div>
+                            <div class="metric__label">Confidence</div>
+                        </div>
+                    </div>
+                </div>
 
-function initializeApp() {
-  // Initialize dashboard charts
-  createTrendChart();
-  createSizeChart();
-  createPolymerChart();
-  
-  // Initialize analysis chart
-  createEISChart();
-  
-  // Update initial values
-  updateHeroCardValues();
-  updatePredictionCard();
-  updateOpticalData();
-  updateEISFeatures();
-}
+                <!-- Water Quality Cards -->
+                <div class="quality-grid">
+                    <div class="quality-card">
+                        <div class="quality-card__icon">🌡️</div>
+                        <div class="quality-card__value">23.5°C</div>
+                        <div class="quality-card__label">Temperature</div>
+                    </div>
+                    <div class="quality-card">
+                        <div class="quality-card__icon">⚗️</div>
+                        <div class="quality-card__value">7.8</div>
+                        <div class="quality-card__label">pH Level</div>
+                    </div>
+                    <div class="quality-card">
+                        <div class="quality-card__icon">⚡</div>
+                        <div class="quality-card__value">425 μS/cm</div>
+                        <div class="quality-card__label">Conductivity</div>
+                    </div>
+                    <div class="quality-card">
+                        <div class="quality-card__icon">💧</div>
+                        <div class="quality-card__value">2.1 NTU</div>
+                        <div class="quality-card__label">Turbidity</div>
+                    </div>
+                </div>
 
-function setupEventListeners() {
-  // Tab navigation
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const tab = e.target.dataset.tab;
-      switchTab(tab);
-    });
-  });
-  
-  // Sample state toggles
-  document.querySelectorAll('.sample-toggle').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const state = e.target.dataset.state;
-      switchSampleState(state);
-    });
-  });
-  
-  // Plot type toggles
-  document.querySelectorAll('.plot-toggle').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const plotType = e.target.dataset.plot;
-      switchPlotType(plotType);
-    });
-  });
-  
-  // Copy link buttons
-  document.getElementById('copyCadBtn').addEventListener('click', () => {
-    copyToClipboard(sensorData.links.cad);
-    showToast('CAD link copied to clipboard!');
-  });
-  
-  document.getElementById('copyUiBtn').addEventListener('click', () => {
-    copyToClipboard(sensorData.links.ui);
-    showToast('Live UI link copied to clipboard!');
-  });
-  
-  // Alert banner close
-  document.getElementById('alertClose').addEventListener('click', () => {
-    document.getElementById('alertBanner').classList.add('hidden');
-  });
-  
-  // Export buttons
-  document.getElementById('exportCsv').addEventListener('click', exportCSV);
-  document.getElementById('exportPng').addEventListener('click', exportPNG);
-  
-  // Time period tabs
-  document.querySelectorAll('.time-tab').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const period = e.target.dataset.period;
-      switchTimePeriod(period);
-    });
-  });
-}
+                <!-- Trend Area -->
+                <div class="trend-section">
+                    <div class="trend-section__header">
+                        <h3>Microplastic Trends</h3>
+                        <div class="time-tabs">
+                            <button class="time-tab time-tab--active" data-period="6h">6h</button>
+                            <button class="time-tab" data-period="24h">24h</button>
+                            <button class="time-tab" data-period="7d">7d</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
 
-function switchTab(tabName) {
-  // Update nav buttons
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('nav-btn--active');
-  });
-  document.querySelector(`[data-tab="${tabName}"]`).classList.add('nav-btn--active');
-  
-  // Update tab content
-  document.querySelectorAll('.tab-content').forEach(content => {
-    content.classList.remove('tab-content--active');
-  });
-  document.getElementById(tabName).classList.add('tab-content--active');
-  
-  currentTab = tabName;
-}
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h4>Particle Size Distribution</h4>
+                        <div class="chart-container" style="position: relative; height: 250px;">
+                            <canvas id="sizeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Polymer Type Breakdown</h4>
+                        <div class="chart-container" style="position: relative; height: 250px;">
+                            <canvas id="polymerChart"></canvas>
+                        </div>
+                    </div>
+                </div>
 
-function switchSampleState(state) {
-  // Update sample toggle buttons
-  document.querySelectorAll('.sample-toggle').forEach(btn => {
-    btn.classList.remove('sample-toggle--active');
-  });
-  document.querySelector(`[data-state="${state}"]`).classList.add('sample-toggle--active');
-  
-  currentSampleState = state;
-  
-  // Update all dependent components
-  updateEISChart();
-  updatePredictionCard();
-  updateOpticalData();
-  updateEISFeatures();
-}
+                <!-- System Status Panel -->
+                <div class="system-panel">
+                    <h3>System Status</h3>
+                    <div class="system-grid">
+                        <div class="system-item">
+                            <span class="system-label">Battery</span>
+                            <div class="battery-indicator">
+                                <div class="battery-level" style="width: 87%"></div>
+                                <span class="battery-text">87%</span>
+                            </div>
+                        </div>
+                        <div class="system-item">
+                            <span class="system-label">GPS Location</span>
+                            <span class="system-value">19.0760°N, 72.8777°E (±3.2m)</span>
+                        </div>
+                        <div class="system-item">
+                            <span class="system-label">Last Calibration</span>
+                            <span class="system-value">Sep 05, 2025 - 10:30 AM</span>
+                        </div>
+                        <div class="system-item">
+                            <span class="system-label">Connection Quality</span>
+                            <span class="status status--success">Excellent</span>
+                        </div>
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn--outline btn--sm" id="exportCsv">Export CSV</button>
+                        <button class="btn btn--outline btn--sm" id="exportPng">Export PNG</button>
+                    </div>
+                </div>
+            </section>
 
-function switchPlotType(plotType) {
-  // Update plot toggle buttons
-  document.querySelectorAll('.plot-toggle').forEach(btn => {
-    btn.classList.remove('plot-toggle--active');
-  });
-  document.querySelector(`[data-plot="${plotType}"]`).classList.add('plot-toggle--active');
-  
-  currentPlotType = plotType;
-  updateEISChart();
-}
+            <!-- Analysis Tab -->
+            <section class="tab-content" id="analysis">
+                <div class="analysis-layout">
+                    <!-- Left Panel: EIS Plots -->
+                    <div class="analysis-left">
+                        <div class="plot-card">
+                            <div class="plot-card__header">
+                                <h3>Electrochemical Impedance Spectroscopy</h3>
+                                <div class="plot-toggles">
+                                    <button class="plot-toggle plot-toggle--active" data-plot="nyquist">Nyquist</button>
+                                    <button class="plot-toggle" data-plot="bode">Bode</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample State Toggles -->
+                            <div class="sample-toggles">
+                                <button class="sample-toggle sample-toggle--active" data-state="baseline">Baseline</button>
+                                <button class="sample-toggle" data-state="low">MPs-Low</button>
+                                <button class="sample-toggle" data-state="high">MPs-High</button>
+                            </div>
 
-function switchTimePeriod(period) {
-  // Update time tab buttons
-  document.querySelectorAll('.time-tab').forEach(btn => {
-    btn.classList.remove('time-tab--active');
-  });
-  document.querySelector(`[data-period="${period}"]`).classList.add('time-tab--active');
-  
-  // Update trend chart data based on period
-  updateTrendChart(period);
-}
+                            <!-- Chart Container -->
+                            <div class="eis-plot-container">
+                                <div class="chart-container" style="position: relative; height: 400px;">
+                                    <canvas id="eisChart"></canvas>
+                                </div>
+                            </div>
 
-function createTrendChart() {
-  const ctx = document.getElementById('trendChart').getContext('2d');
-  charts.trend = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: sensorData.historicalData.hourlyReadings.map(r => r.time),
-      datasets: [{
-        label: 'Concentration (mg/L)',
-        data: sensorData.historicalData.hourlyReadings.map(r => r.concentration),
-        borderColor: '#1FB8CD',
-        backgroundColor: 'rgba(31, 184, 205, 0.1)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: {
-          grid: {
-            display: false
-          }
-        },
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Concentration (mg/L)'
-          }
-        }
-      },
-      interaction: {
-        intersect: false
-      }
-    }
-  });
-}
+                            <!-- Mini Legend -->
+                            <div class="mini-legend">
+                                <p>Each point = one frequency; left→right = low→high Re(Z); tooltips show frequency</p>
+                            </div>
+                        </div>
+                    </div>
 
-function createSizeChart() {
-  const ctx = document.getElementById('sizeChart').getContext('2d');
-  charts.size = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: sensorData.historicalData.particleSizeDistribution.map(p => p.size),
-      datasets: [{
-        data: sensorData.historicalData.particleSizeDistribution.map(p => p.percentage),
-        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Percentage (%)'
-          }
-        }
-      }
-    }
-  });
-}
+                    <!-- Right Panel: Predictions & Features -->
+                    <div class="analysis-right">
+                        <!-- ML Prediction Card -->
+                        <div class="prediction-card">
+                            <h4>ML Prediction</h4>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Microplastics</span>
+                                <span class="status status--success" id="predictionStatus">None</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Size Band</span>
+                                <span class="prediction-value" id="sizeBand">N/A</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Likely Polymer</span>
+                                <span class="prediction-value" id="polymerType">N/A</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Confidence</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill" style="width: 96.8%"></div>
+                                    <span class="confidence-text" id="confidenceText">96.8%</span>
+                                </div>
+                            </div>
+                        </div>
 
-function createPolymerChart() {
-  const ctx = document.getElementById('polymerChart').getContext('2d');
-  charts.polymer = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: sensorData.historicalData.polymerTypes.map(p => p.type),
-      datasets: [{
-        data: sensorData.historicalData.polymerTypes.map(p => p.percentage),
-        backgroundColor: sensorData.historicalData.polymerTypes.map(p => p.color),
-        borderWidth: 2,
-        borderColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            padding: 15
-          }
-        }
-      }
-    }
-  });
-}
+                        <!-- Optical Fusion Widget -->
+                        <div class="optical-card">
+                            <h4>Optical Fusion</h4>
+                            <div class="led-bars">
+                                <div class="led-bar">
+                                    <span class="led-label">450nm</span>
+                                    <div class="led-indicator" style="width: 60%; background: #4A90E2;"></div>
+                                    <span class="led-value" id="led450">15.2</span>
+                                </div>
+                                <div class="led-bar">
+                                    <span class="led-label">525nm</span>
+                                    <div class="led-indicator" style="width: 75%; background: #7ED321;"></div>
+                                    <span class="led-value" id="led525">18.7</span>
+                                </div>
+                                <div class="led-bar">
+                                    <span class="led-label">625nm</span>
+                                    <div class="led-indicator" style="width: 65%; background: #D0021B;"></div>
+                                    <span class="led-value" id="led625">16.4</span>
+                                </div>
+                            </div>
+                            <div class="optical-ratio">
+                                <span>I450/I625 Ratio: <strong id="opticalRatio">0.93</strong></span>
+                                <span class="status status--success">Optical fusion: ON</span>
+                            </div>
+                        </div>
 
-function createEISChart() {
-  const ctx = document.getElementById('eisChart').getContext('2d');
-  
-  const data = sensorData.eisData[currentSampleState];
-  const chartData = currentPlotType === 'nyquist' ? 
-    getNyquistData(data) : getBodeData(data);
-  
-  charts.eis = new Chart(ctx, {
-    type: currentPlotType === 'nyquist' ? 'scatter' : 'line',
-    data: chartData,
-    options: currentPlotType === 'nyquist' ? getNyquistOptions() : getBodeOptions()
-  });
-}
+                        <!-- EIS Features Grid -->
+                        <div class="features-card">
+                            <h4>EIS Features</h4>
+                            <div class="features-grid">
+                                <div class="feature-item">
+                                    <span class="feature-label">Rct</span>
+                                    <span class="feature-value" id="rctValue">18.5 Ω</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-label">Cdl</span>
+                                    <span class="feature-value" id="cdlValue">8.6 μF</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-label">|Z|(1kHz)</span>
+                                    <span class="feature-value" id="zMagValue">130.4 Ω</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-label">Phase(100Hz)</span>
+                                    <span class="feature-value" id="phaseValue">-15.2°</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-label">Warburg Index</span>
+                                    <span class="feature-value" id="warburgValue">0.52</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-label">Rs</span>
+                                    <span class="feature-value" id="rsValue">127.2 Ω</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-function getNyquistData(data) {
-  return {
-    datasets: [{
-      label: 'EIS Data',
-      data: data.zReal.map((real, i) => ({
-        x: real,
-        y: -data.zImag[i],
-        frequency: data.frequencies[i]
-      })),
-      backgroundColor: '#1FB8CD',
-      borderColor: '#1FB8CD',
-      showLine: true,
-      pointRadius: 5,
-      pointHoverRadius: 7
-    }]
-  };
-}
+            <!-- Explain Tab -->
+            <section class="tab-content" id="explain">
+                <div class="explain-content">
+                    <!-- How It Works -->
+                    <div class="explain-section">
+                        <h3>How the Sensor Works</h3>
+                        <div class="steps-container">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Baseline Scan</h4>
+                                    <p>System captures EIS signature of clean water sample to establish reference impedance profile</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Sample Scan</h4>
+                                    <p>Test water is analyzed using AC impedance spectroscopy across frequency range 0.01Hz-100kHz</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Feature Extraction</h4>
+                                    <p>Algorithm extracts key parameters: charge transfer resistance (Rct), double layer capacitance (Cdl), and Warburg diffusion index</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>ML Inference</h4>
+                                    <p>1D-CNN + Random Forest ensemble model processes EIS features to classify microplastic presence and type</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h4>Decision + Alert</h4>
+                                    <p>System outputs confidence-weighted prediction with particle size estimation and polymer identification</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-function getBodeData(data) {
-  const zMag = data.zReal.map((real, i) => 
-    Math.sqrt(real * real + data.zImag[i] * data.zImag[i])
-  );
-  const phase = data.zReal.map((real, i) => 
-    Math.atan2(-data.zImag[i], real) * 180 / Math.PI
-  );
-  
-  return {
-    labels: data.frequencies,
-    datasets: [{
-      label: '|Z| (Ω)',
-      data: zMag,
-      borderColor: '#1FB8CD',
-      backgroundColor: 'rgba(31, 184, 205, 0.1)',
-      yAxisID: 'y',
-      tension: 0.1
-    }, {
-      label: 'Phase (°)',
-      data: phase,
-      borderColor: '#FFC185',
-      backgroundColor: 'rgba(255, 193, 133, 0.1)',
-      yAxisID: 'y1',
-      tension: 0.1
-    }]
-  };
-}
+                    <!-- Why EIS + LEDs -->
+                    <div class="explain-section">
+                        <h3>Why EIS + LEDs?</h3>
+                        <div class="advantages-grid">
+                            <div class="advantage-card">
+                                <h4>Advantages</h4>
+                                <ul>
+                                    <li>Cost-effective: ₹7k-₹10k prototype vs ₹50L+ for FTIR/Raman systems</li>
+                                    <li>Speed: &lt;2 minutes per test vs 30+ minutes for spectroscopy</li>
+                                    <li>Field-ready: Battery-powered, ruggedized design for remote deployment</li>
+                                    <li>Multi-modal: EIS + optical fusion improves accuracy by 15-20%</li>
+                                    <li>Low maintenance: No complex optical alignment or consumables required</li>
+                                </ul>
+                            </div>
+                            <div class="advantage-card">
+                                <h4>Limitations</h4>
+                                <ul>
+                                    <li>Lower specificity than FTIR for polymer identification</li>
+                                    <li>Requires calibration for different water matrices</li>
+                                    <li>Cannot detect particles &lt;10μm effectively</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-function getNyquistOptions() {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1,
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const point = context.raw;
-            return [
-              `Frequency: ${point.frequency} Hz`,
-              `Re(Z): ${point.x.toFixed(1)} Ω`,
-              `-Im(Z): ${point.y.toFixed(1)} Ω`
-            ];
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Re(Z) [Ω]'
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: '-Im(Z) [Ω]'
-        }
-      }
-    }
-  };
-}
+                    <!-- Validation Plan -->
+                    <div class="explain-section">
+                        <h3>Validation Plan</h3>
+                        <div class="validation-list">
+                            <div class="validation-item">
+                                <div class="validation-icon">🧪</div>
+                                <p>Lab-spiked samples with known microplastic concentrations (10-1000 particles/L)</p>
+                            </div>
+                            <div class="validation-item">
+                                <div class="validation-icon">🔬</div>
+                                <p>Cross-validation against FTIR/Raman spectroscopy for polymer ID accuracy</p>
+                            </div>
+                            <div class="validation-item">
+                                <div class="validation-icon">🌊</div>
+                                <p>Field deployment in 3 different water bodies (river, lake, coastal)</p>
+                            </div>
+                            <div class="validation-item">
+                                <div class="validation-icon">📊</div>
+                                <p>Blind testing with environmental samples collected by independent labs</p>
+                            </div>
+                            <div class="validation-item">
+                                <div class="validation-icon">✅</div>
+                                <p>Statistical validation: 95% accuracy for presence/absence, 78% for polymer type</p>
+                            </div>
+                        </div>
+                    </div>
 
-function getBodeOptions() {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top'
-      }
-    },
-    scales: {
-      x: {
-        type: 'logarithmic',
-        title: {
-          display: true,
-          text: 'Frequency (Hz)'
-        }
-      },
-      y: {
-        type: 'logarithmic',
-        position: 'left',
-        title: {
-          display: true,
-          text: '|Z| (Ω)'
-        }
-      },
-      y1: {
-        type: 'linear',
-        position: 'right',
-        title: {
-          display: true,
-          text: 'Phase (°)'
-        },
-        grid: {
-          drawOnChartArea: false
-        }
-      }
-    }
-  };
-}
+                    <!-- Cost & Power -->
+                    <div class="explain-section">
+                        <h3>Cost & Power</h3>
+                        <div class="cost-grid">
+                            <div class="cost-item">
+                                <div class="cost-icon">💰</div>
+                                <div class="cost-label">Prototype Cost</div>
+                                <div class="cost-value">₹7,000 - ₹10,000</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-icon">⏱️</div>
+                                <div class="cost-label">Test Duration</div>
+                                <div class="cost-value">&lt;2 minutes</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-icon">🔋</div>
+                                <div class="cost-label">Battery Life</div>
+                                <div class="cost-value">24 hours continuous</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-icon">🔧</div>
+                                <div class="cost-label">Maintenance</div>
+                                <div class="cost-value">Monthly calibration</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-icon">🌧️</div>
+                                <div class="cost-label">Deployment</div>
+                                <div class="cost-value">IP67 rated</div>
+                            </div>
+                        </div>
+                    </div>
 
-function updateEISChart() {
-  if (charts.eis) {
-    charts.eis.destroy();
-  }
-  createEISChart();
-}
+                    <!-- Links Section -->
+                    <div class="explain-section">
+                        <h3>Project Links</h3>
+                        <div class="links-grid">
+                            <div class="link-card">
+                                <h4>CAD Prototype</h4>
+                                <p>3D model and technical drawings</p>
+                                <a href="https://a360.co/3W7gEjE" target="_blank" class="btn btn--primary">View in Fusion 360</a>
+                            </div>
+                            <div class="link-card">
+                                <h4>Live UI Demo</h4>
+                                <p>Interactive web application</p>
+                                <a href="https://adwait3.github.io/Micronauts" target="_blank" class="btn btn--primary">Launch Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
 
-function updateTrendChart(period) {
-  // In a real app, this would fetch different data based on period
-  // For demo purposes, we'll just update the existing chart
-  if (charts.trend) {
-    charts.trend.update();
-  }
-}
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-text" id="toastText">Link copied to clipboard!</span>
+    </div>
 
-function updateHeroCardValues() {
-  const count = sensorData.currentReading.microplasticCount;
-  const concentration = sensorData.currentReading.concentration;
-  const confidence = sensorData.currentReading.confidenceLevel;
-  
-  animateValue('microplasticCount', 0, count, 2000);
-  animateValue('concentration', 0, concentration, 2000, 1);
-  animateValue('confidence', 0, confidence, 2000, 1);
-}
-
-function updatePredictionCard() {
-  const prediction = sensorData.mlPredictions[currentSampleState];
-  
-  document.getElementById('predictionStatus').textContent = prediction.status;
-  document.getElementById('predictionStatus').className = `status status--${prediction.statusChip}`;
-  document.getElementById('sizeBand').textContent = prediction.sizeBand;
-  document.getElementById('polymerType').textContent = prediction.polymer;
-  
-  // Animate confidence bar
-  const confidenceFill = document.getElementById('confidenceFill');
-  const confidenceText = document.getElementById('confidenceText');
-  
-  confidenceFill.style.width = '0%';
-  confidenceText.textContent = '0%';
-  
-  setTimeout(() => {
-    confidenceFill.style.width = `${prediction.confidence}%`;
-    animateValue('confidenceText', 0, prediction.confidence, 1000, 1, '%');
-  }, 100);
-}
-
-function updateOpticalData() {
-  const optical = sensorData.opticalData[currentSampleState];
-  
-  document.getElementById('led450').textContent = optical.led450nm.toFixed(1);
-  document.getElementById('led525').textContent = optical.led525nm.toFixed(1);
-  document.getElementById('led625').textContent = optical.led625nm.toFixed(1);
-  document.getElementById('opticalRatio').textContent = optical.ratio.toFixed(2);
-  
-  // Update LED bar widths with animation
-  setTimeout(() => {
-    document.querySelector('.led-bar:nth-child(1) .led-indicator').style.width = 
-      `${(optical.led450nm / 30) * 100}%`;
-    document.querySelector('.led-bar:nth-child(2) .led-indicator').style.width = 
-      `${(optical.led525nm / 30) * 100}%`;
-    document.querySelector('.led-bar:nth-child(3) .led-indicator').style.width = 
-      `${(optical.led625nm / 30) * 100}%`;
-  }, 100);
-}
-
-function updateEISFeatures() {
-  const features = sensorData.eisData[currentSampleState].features;
-  
-  document.getElementById('rctValue').textContent = `${features.rct.toFixed(1)} Ω`;
-  document.getElementById('cdlValue').textContent = `${(features.cdl * 1e6).toFixed(1)} μF`;
-  document.getElementById('zMagValue').textContent = `${features.zMag1kHz.toFixed(1)} Ω`;
-  document.getElementById('phaseValue').textContent = `${features.phase100Hz.toFixed(1)}°`;
-  document.getElementById('warburgValue').textContent = features.warburgIndex.toFixed(2);
-  document.getElementById('rsValue').textContent = `${features.rs.toFixed(1)} Ω`;
-}
-
-function animateValue(elementId, start, end, duration, decimals = 0, suffix = '') {
-  const element = document.getElementById(elementId);
-  const range = end - start;
-  const startTime = performance.now();
-  
-  function updateValue(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    
-    // Easing function for smooth animation
-    const easeOut = 1 - Math.pow(1 - progress, 3);
-    const currentValue = start + (range * easeOut);
-    
-    element.textContent = currentValue.toFixed(decimals) + suffix;
-    
-    if (progress < 1) {
-      requestAnimationFrame(updateValue);
-    }
-  }
-  
-  requestAnimationFrame(updateValue);
-}
-
-function simulateRealTimeData() {
-  // Simulate small variations in readings
-  const variation = (Math.random() - 0.5) * 0.2;
-  sensorData.currentReading.concentration = 
-    Math.max(10, sensorData.currentReading.concentration + variation);
-  
-  sensorData.currentReading.microplasticCount = 
-    Math.round(sensorData.currentReading.concentration * 68 + Math.random() * 20);
-  
-  // Update dashboard if currently visible
-  if (currentTab === 'dashboard') {
-    document.getElementById('concentration').textContent = 
-      sensorData.currentReading.concentration.toFixed(1);
-    document.getElementById('microplasticCount').textContent = 
-      sensorData.currentReading.microplasticCount;
-  }
-}
-
-function updateTime() {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString('en-US', { 
-    hour12: true,
-    hour: 'numeric',
-    minute: '2-digit'
-  });
-  document.getElementById('statusTime').textContent = timeString;
-}
-
-function copyToClipboard(text) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text);
-  } else {
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
-  }
-}
-
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  const toastText = document.getElementById('toastText');
-  
-  toastText.textContent = message;
-  toast.classList.add('show');
-  
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
-
-function exportCSV() {
-  const data = sensorData.historicalData.hourlyReadings;
-  const csvContent = [
-    ['Time', 'Particle Count', 'Concentration (mg/L)'],
-    ...data.map(row => [row.time, row.count, row.concentration])
-  ].map(row => row.join(',')).join('\n');
-  
-  downloadFile(csvContent, 'microplastics-data.csv', 'text/csv');
-  showToast('CSV data exported successfully!');
-}
-
-function exportPNG() {
-  const canvas = document.getElementById('trendChart');
-  const link = document.createElement('a');
-  link.download = 'trend-chart.png';
-  link.href = canvas.toDataURL();
-  link.click();
-  showToast('Chart exported as PNG!');
-}
-
-function downloadFile(content, fileName, contentType) {
-  const blob = new Blob([content], { type: contentType });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
-
-// Handle reduced motion preference
-if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  // Disable animations for users who prefer reduced motion
-  document.documentElement.style.setProperty('--duration-fast', '0ms');
-  document.documentElement.style.setProperty('--duration-normal', '0ms');
-}
+    <script src="app.js"></script>
+</body>
+</html>
